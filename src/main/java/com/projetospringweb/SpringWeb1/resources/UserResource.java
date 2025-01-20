@@ -11,6 +11,8 @@ import com.projetospringweb.SpringWeb1.entities.User;
 @RequestMapping(value = "/users")
 public class UserResource {
 
+	
+	//Teste de serviços 
 	@GetMapping
 	public ResponseEntity<User> findAll() {
 		User u = new User(1L, "Juan", "juangsilvalemos", "10488775400", "81996272911");
