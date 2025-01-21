@@ -12,7 +12,7 @@ import com.projetospringweb.SpringWeb1.entities.User;
 public class UserResource {
 
 	
-	//Teste de serviços 
+	//Teste de recursos
 	@GetMapping
 	public ResponseEntity<User> findAll() {
 		User u = new User(1L, "Juan", "juangsilvalemos", "10488775400", "81996272911");
