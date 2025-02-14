@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,8 +27,15 @@ public class User implements Serializable {
 	private String email;
 	private String phone;
 	private String password;
+
+	@JsonManagedReference
 	// Define um relacionamento um-para-muitos com a entidade Order
-	// Um usuário (client) pode ter vários pedidos associados a ele
+	// Um usuário (client) pode ter vários pedidos associados a ele.
+	// A anotação @JsonManagedReference é usada para indicar que a lista de pedidos
+	// (orders) será serializada quando o usuário (client) for convertido para JSON.
+	// Ela também evita um loop infinito, já que o lado oposto da relação (Order)
+	// pode referenciar o usuário (client) usando @JsonBackReference, prevenindo a
+	// serialização recursiva do relacionamento entre User e Order.
 	@OneToMany(mappedBy = "client")
 	private List<Order> orders = new ArrayList<>();
 

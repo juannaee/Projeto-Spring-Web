@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,11 +27,17 @@ public class Order implements Serializable {
 	private Long id;
 	private Instant moment;
 
+	@JsonBackReference
 	// Define um relacionamento muitos-para-um com a entidade User
-	// Vários registros desta entidade podem estar associados a um único usuário
+	// Vários pedidos (Order) podem estar associados a um único usuário (User).
+	// A anotação @JsonBackReference é usada para evitar que o usuário (client)
+	// seja serializado quando a entidade Order for convertida para JSON.
+	// Ela previne a serialização recursiva do relacionamento entre User e Order,
+	// já que o lado "um" da relação (User) é serializado com @JsonManagedReference.
 	@ManyToOne
 	// Especifica a coluna no banco de dados que funcionará como chave estrangeira
-	// para User
+	// para User, representando o vínculo entre um pedido (Order) e um usuário
+	// (client).
 	@JoinColumn(name = "client_id")
 	private User client;
 
