@@ -2,7 +2,7 @@ package com.projetospringweb.SpringWeb1.resources;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,8 +15,12 @@ import com.projetospringweb.SpringWeb1.service.UserService;
 @RequestMapping(value = "/users")
 public class UserResource {
 
-	@Autowired
-	private UserService userService;
+	private final UserService userService;
+
+	//@Autowired não é mais necessario usar
+	public UserResource(UserService userService) {
+		this.userService = userService;
+	}
 
 	/**
 	 * Endpoint para testes via Postman. URL: http://localhost:8080/users Método:
