@@ -29,13 +29,6 @@ public class User implements Serializable {
 	private String password;
 
 	@JsonManagedReference
-	// Define um relacionamento um-para-muitos com a entidade Order
-	// Um usuário (client) pode ter vários pedidos associados a ele.
-	// A anotação @JsonManagedReference é usada para indicar que a lista de pedidos
-	// (orders) será serializada quando o usuário (client) for convertido para JSON.
-	// Ela também evita um loop infinito, já que o lado oposto da relação (Order)
-	// pode referenciar o usuário (client) usando @JsonBackReference, prevenindo a
-	// serialização recursiva do relacionamento entre User e Order.
 	@OneToMany(mappedBy = "client")
 	private List<Order> orders = new ArrayList<>();
 
