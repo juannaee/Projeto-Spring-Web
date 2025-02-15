@@ -1,0 +1,28 @@
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Decisão de Lançar Exceção em vez de Retornar Optional<User>
+	 public Optional<User> findById(Long id) {
+	     return userRepository.findById(id);
+	 }
+	 
+
+Optei por não retornar Optional<User> no método findById(Long id), pois, em APIs REST, é mais adequado lançar uma exceção personalizada 
+(ResourceNotFoundException). Isso permite que a API retorne uma resposta HTTP apropriada, como o status 404 (Not Found), 
+quando o recurso não for encontrado.
+
+Essa abordagem traz diversos benefícios:
+
+Código mais limpo e direto – Evita verificações manuais com Optional.isPresent() antes de acessar o valor.
+Melhor controle do fluxo de erros – O tratamento de exceções fica mais claro e padronizado.
+Melhor experiência para o cliente da API – A exceção personalizada permite indicar explicitamente a causa do erro, 
+tornando a comunicação mais compreensível.
+Aderência às melhores práticas REST – O uso de respostas HTTP padronizadas melhora a manutenção e interoperabilidade da API.
+Em vez de retornar um Optional<User>, a implementação do método ficou assim:	 
+
+public User findById(Long id) {
+    return userRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com id: " + id));
+}
+Dessa forma, caso o usuário não seja encontrado, a exceção ResourceNotFoundException será lançada automaticamente, 
+garantindo que a API responda corretamente ao client	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
