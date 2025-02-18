@@ -1,6 +1,8 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 Decisão de Lançar Exceção em vez de Retornar Optional<User>
+
 	 public Optional<User> findById(Long id) {
 	     return userRepository.findById(id);
 	 }
@@ -24,5 +26,78 @@ public User findById(Long id) {
             .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com id: " + id));
 }
 Dessa forma, caso o usuário não seja encontrado, a exceção ResourceNotFoundException será lançada automaticamente, 
-garantindo que a API responda corretamente ao client	
+garantindo que a API responda corretamente ao client
+	
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Anotação sobre @JsonManagedReference e @JsonBackReference
+
+A serialização de relações bidirecionais entre entidades no Spring Boot pode gerar loops infinitos. 
+Para evitar esse problema, utilizamos @JsonManagedReference e @JsonBackReference para definir como os dados serão processados ao 
+converter objetos para JSON.
+
+1. @JsonManagedReference
+A anotação @JsonManagedReference é usada no lado "pai" da relação, ou seja, na entidade User, que possui um relacionamento 
+um-para-muitos com Order. Isso significa que um usuário (client) pode ter vários pedidos (orders) associados a ele.
+
+Quando um objeto User for serializado para JSON, a lista de pedidos (orders) será incluída na resposta, pois esse é o lado 
+"gerenciado" da relação. Além disso, a anotação impede um loop infinito ao evitar a serialização recursiva entre User e Order.
+
+@JsonManagedReference
+@OneToMany(mappedBy = "client")
+private List<Order> orders = new ArrayList<>();
+
+2. @JsonBackReference
+Já a anotação @JsonBackReference é utilizada no lado "filho" da relação, ou seja, na entidade Order, 
+que possui um relacionamento muitos-para-um com User. Isso significa que vários pedidos (Order) podem estar associados a 
+um único usuário (User).
+
+Quando um objeto Order for serializado para JSON, o atributo client não será incluído na resposta. 
+Isso evita que a serialização fique presa em um ciclo infinito entre as duas entidades.
+
+@JsonBackReference
+@ManyToOne
+@JoinColumn(name = "client_id")
+private User client;
+
+
+Resumo
+@JsonManagedReference → Lado "pai" da relação (User), permite a serialização dos pedidos (orders).
+@JsonBackReference → Lado "filho" da relação (Order), impede a serialização do usuário (client) para evitar loops.
+Com essa abordagem, garantimos que a API retorne os dados corretamente sem enfrentar problemas de serialização cíclica.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+A anotação @Transient é usada em classes de entidades (ou outros objetos mapeados pelo JPA) 
+para indicar que determinado campo ou propriedade não deve ser persistido no banco de dados. 
+Em outras palavras, o JPA ignora esse campo quando realiza operações de leitura ou gravação na base.
+
+Principais Pontos
+Não Persistência:
+Campos marcados com @Transient não serão mapeados para colunas na tabela correspondente. 
+Isso é útil para atributos que são calculados ou derivados de outros dados persistentes e, portanto, não precisam ser armazenados no BD.
+
+
+Uso em Métodos e Atributos:
+Você pode aplicar @Transient tanto em atributos (campos) quanto em métodos (normalmente getters). 
+Se, por exemplo, você tiver um método que retorna um valor calculado com base em outros atributos, 
+marcá-lo com @Transient evita que o JPA tente mapeá-lo para uma coluna inexistente.
+
+
+Comparação com a palavra-chave transient:
+É importante não confundir a anotação @Transient com a palavra-chave transient do Java. 
+Enquanto o transient impede que o campo seja serializado (por exemplo, durante a serialização de 
+um objeto em um arquivo ou transmissão pela rede), a anotação @Transient é específica para o 
+contexto de persistência JPA e não interfere na serialização do objeto.
+
+Quando Utilizar @Transient?
+
+Campos Derivados:
+Quando um valor pode ser calculado a partir de outros dados persistentes. 
+Por exemplo, a soma de itens em um pedido, ou uma descrição formatada.
+
+Dados Temporários:
+Informações que fazem sentido apenas durante a execução da aplicação, como contadores ou flags de controle, que não necessitam ser armazenadas.
+
+Separação de Responsabilidades:
+Para manter a camada de persistência livre de dados que só são utilizados na lógica de negócio ou na camada de apresentação, 
+garantindo que o banco contenha apenas os dados essenciais.
