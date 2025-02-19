@@ -8,9 +8,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import com.projetospringweb.SpringWeb1.entities.CategoryProduct;
 import com.projetospringweb.SpringWeb1.entities.Order;
 import com.projetospringweb.SpringWeb1.entities.User;
 import com.projetospringweb.SpringWeb1.entities.enums.OrderStatus;
+import com.projetospringweb.SpringWeb1.repositories.CategoryRepository;
 import com.projetospringweb.SpringWeb1.repositories.OrderRepository;
 import com.projetospringweb.SpringWeb1.repositories.UserRepository;
 
@@ -23,6 +25,9 @@ public class TestConfig implements CommandLineRunner {
 	@Autowired
 	private OrderRepository orderRepository;
 
+	@Autowired
+	private CategoryRepository categoryRepository;
+
 	@Override
 	public void run(String... args) {
 		User u1 = new User(null, "Juan", "juan@", "81996272911", "2711114");
@@ -30,7 +35,9 @@ public class TestConfig implements CommandLineRunner {
 		Order o1 = new Order(null, Instant.parse("2025-02-14T10:30:45Z"), OrderStatus.PAID, u1);
 		Order o2 = new Order(null, Instant.parse("2022-03-08T11:47:45Z"), OrderStatus.PAID, u2);
 		Order o3 = new Order(null, Instant.parse("2021-01-02T09:30:45Z"), OrderStatus.SHIPPED, u1);
+		CategoryProduct cp1 = new CategoryProduct(null, "Tecnologia");
 
+		categoryRepository.saveAll(Arrays.asList(cp1));
 		userRepository.saveAll(Arrays.asList(u1, u2));
 		orderRepository.saveAll(Arrays.asList(o1, o2, o3));
 
