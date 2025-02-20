@@ -54,9 +54,11 @@ public class TestConfig implements CommandLineRunner {
 		Product p5 = new Product(null, "Mouse Gamer", "Mouse com sensor de alta precisão", 250.00, "mousegamer.com.br");
 		Product p6 = new Product(null, "Cadeira Ergonômica", "Cadeira confortável para longas sessões de uso", 980.00,
 				"cadeiraergonomica.com.br");
+		Product p7 = new Product(null, "Monitor UltraWide", "Monitor de alta resolução com tela ampla", 1899.00, "monitorultrawide.com.br");
+
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		productRepository.saveAll(Arrays.asList(p1, p2, p3, p4, p5, p6));
+		productRepository.saveAll(Arrays.asList(p1, p2, p3, p4, p5, p6,p7));
 		categoryRepository.saveAll(Arrays.asList(cp1));
 		userRepository.saveAll(Arrays.asList(u1, u2));
 		orderRepository.saveAll(Arrays.asList(o1, o2, o3));
